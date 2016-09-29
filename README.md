@@ -7,4 +7,4 @@ export CONTROL_BUS_URL="[your own control-bus-url]"
 git clone https://github.com/seki-seki/job-streamer-custom-console.git
 cd job-streamer-custom-console
 mvn jetty:run
-'''
+```
