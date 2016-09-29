@@ -29,7 +29,7 @@ import us.bpsm.edn.parser.Parsers;
 
 @Path("/")
 public class MyResource {
-    public static final String CONTROL_BUS_URL = System.getenv().get("CONTROL_BUS_URL");
+    public static final String CONTROL_BUS_URL = System.getenv().containsKey("CONTROL_BUS_URL") ? System.getenv().get("CONTROL_BUS_URL"):"http://localhost:45102";
 
     @GET
     public Viewable index() {
