@@ -3,6 +3,8 @@ package job_streamer.job_streamer_custom_console;
 import static us.bpsm.edn.Keyword.newKeyword;
 import static us.bpsm.edn.parser.Parsers.defaultConfiguration;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,21 +33,8 @@ public class MyResource {
 
     @GET
     public Viewable index() {
-        // control-busはedn形式でResponseを返すのでhttps://github.com/bpsm/edn-javaを使いMapにparseする
-        Parseable pbr = Parsers.newParseable(HttpRequestUtil.executeGet(CONTROL_BUS_URL + "/default/jobs"));
-        Parser p = Parsers.newParser(defaultConfiguration());
-        Map<?, ?> jobdata = (Map<?, ?>) p.nextValue(pbr);
-
-        List<Map<?, ?>> jobResults = (List<Map<?, ?>>) jobdata.get((newKeyword("results")));
-        // key型がｊｓｐでは扱いにくいので扱い安い形にparseする
         return new Viewable("/index",
-                jobResults.stream()
-                        .map(singleJobResult -> new Job((String) singleJobResult.get(newKeyword("job", "name")),
-                                (String) MapUtil.getIn(singleJobResult, newKeyword("job", "latest-execution"),
-                                        newKeyword("job-execution", "exit-status")),
-                                (Date) MapUtil.getIn(singleJobResult, newKeyword("job", "latest-execution"),
-                                        newKeyword("job-execution", "end-time"))))
-                        .collect(ArrayList<Job>::new, ArrayList<Job>::add, ArrayList<Job>::addAll));
+                ednToJob(HttpRequestUtil.executeGet(CONTROL_BUS_URL + "/default/jobs")));
 
     }
 
@@ -60,38 +49,45 @@ public class MyResource {
     @Path("search")
     @GET
     public Viewable search(@QueryParam("name") String name, @QueryParam("since") String since,
-            @QueryParam("until") String until, @QueryParam("status") String status) {
-        // control-busはedn形式でResponseを返すのでhttps://github.com/bpsm/edn-javaを使いMapにparseする
+            @QueryParam("until") String until, @QueryParam("status") String status) throws UnsupportedEncodingException {
+        // TODO: 日付等のバリデーション
         String query = parseQuery(name, since, until, status);
-        System.out.println(query);
-        Parseable pbr = Parsers.newParseable(HttpRequestUtil.executeGet(CONTROL_BUS_URL + "/default/jobs?q=" + query));
-        Parser p = Parsers.newParser(defaultConfiguration());
-        Map<?, ?> jobdata = (Map<?, ?>) p.nextValue(pbr);
-
-        List<Map<?, ?>> jobResults = (List<Map<?, ?>>) jobdata.get((newKeyword("results")));
-        // key型がｊｓｐでは扱いにくいので扱い安い形にparseする
-        return new Viewable("/index",
-                jobResults.stream()
-                        .map(singleJobResult -> new Job((String) singleJobResult.get(newKeyword("job", "name")),
-                                (String) MapUtil.getIn(singleJobResult, newKeyword("job", "latest-execution"),
-                                        newKeyword("job-execution", "exit-status")),
-                                (Date) MapUtil.getIn(singleJobResult, newKeyword("job", "latest-execution"),
-                                        newKeyword("job-execution", "end-time"))))
-                        .collect(ArrayList<Job>::new, ArrayList<Job>::add, ArrayList<Job>::addAll));
+        
+        String encodedquery = URLEncoder.encode(query, "UTF-8");
+        return new Viewable("/index",ednToJob(HttpRequestUtil
+                .executeGet(CONTROL_BUS_URL + "/default/jobs?q=" + encodedquery)));
     }
 
     String parseQuery(String name, String since, String until, String status) {
         StringBuilder sb = new StringBuilder();
-        if (Strings.isNullOrEmpty(name))
+        if (!Strings.isNullOrEmpty(name))
             sb.append(name).append(" ");
-        if (Strings.isNullOrEmpty(since))
+        if (!Strings.isNullOrEmpty(since))
             sb.append("since:").append(since).append(" ");
-        if (Strings.isNullOrEmpty(until))
+        if (!Strings.isNullOrEmpty(until))
             sb.append("until:").append(until).append(" ");
-        if (Strings.isNullOrEmpty(status))
+        if (!Strings.isNullOrEmpty(status))
             sb.append("exit-status:").append(status).append(" ");
+        // queryの最後についているスペースを削除
         if (sb.length() == 0)
             return "";
-        return sb.toString().substring(0, sb.length() - 2);
+        return sb.toString().substring(0, sb.length() - 1);
+    }
+
+    List<Job> ednToJob(String edn) {
+        // control-busはedn形式でResponseを返すのでhttps://github.com/bpsm/edn-javaを使いMapにparseする
+        Parseable pbr = Parsers.newParseable(edn);
+        Parser p = Parsers.newParser(defaultConfiguration());
+        Map jobdata = (Map) p.nextValue(pbr);
+
+        List<Map<?, ?>> jobResults = (List<Map<?, ?>>) jobdata.get((newKeyword("results")));
+        // key型がｊｓｐでは扱いにくいので扱い安い形にparseする
+        return jobResults.stream()
+                .map(singleJobResult -> new Job((String) singleJobResult.get(newKeyword("job", "name")),
+                        (String) MapUtil.getIn(singleJobResult, newKeyword("job", "latest-execution"),
+                                newKeyword("job-execution", "exit-status")),
+                        (Date) MapUtil.getIn(singleJobResult, newKeyword("job", "latest-execution"),
+                                newKeyword("job-execution", "end-time"))))
+                .collect(ArrayList<Job>::new, ArrayList<Job>::add, ArrayList<Job>::addAll);
     }
 }

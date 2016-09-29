@@ -9,7 +9,7 @@ public class MapUtil {
             return null;
         }
         // TODO:あとでstream API + 再帰にする。
-        Optional<Object> optMap = Optional.ofNullable(map);
+        Optional optMap = Optional.ofNullable(map);
         for (Object key : keys) {
             optMap = optMap.filter(progressMap -> progressMap instanceof Map)
                     .map(progressMap -> ((Map) progressMap).get(key));
