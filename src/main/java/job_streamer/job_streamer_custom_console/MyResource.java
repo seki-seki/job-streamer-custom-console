@@ -41,7 +41,6 @@ public class MyResource {
     @Path("{jobname}/execute")
     @POST
     public Viewable execute(@PathParam("jobname") String jobname) {
-        System.out.println();
         HttpRequestUtil.executePostJSON(CONTROL_BUS_URL + "/default/job/" + jobname + "/executions", null);
         return new Viewable("/afterExecute");
     }
