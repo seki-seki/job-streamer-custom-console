@@ -5,7 +5,7 @@ java8 or later
 
 maven 3.3.0 or later
 
-#Getiing Started
+#Getting Started
 
 ```
 export CONTROL_BUS_URL="[your own control-bus-url]"
