@@ -3,10 +3,11 @@ package job_streamer.job_streamer_custom_console.model;
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
+@Builder
 public class Job {
 
     private String name;

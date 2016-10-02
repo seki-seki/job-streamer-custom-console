@@ -1,4 +1,4 @@
-package job_streamer.job_streamer_custom_console;
+package job_streamer.job_streamer_custom_console.resource;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -8,6 +8,8 @@ import java.time.ZoneId;
 import java.util.Date;
 
 import org.junit.Test;
+
+import job_streamer.job_streamer_custom_console.resource.MyResource;
 
 public class MyResourceTest {
 
