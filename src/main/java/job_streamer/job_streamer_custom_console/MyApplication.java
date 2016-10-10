@@ -5,11 +5,15 @@ import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.mvc.jsp.JspMvcFeature;
 
-@ApplicationPath("")
+@ApplicationPath("/")
 public class MyApplication extends ResourceConfig {
 
     public MyApplication() {
-        this.packages(MyApplication.class.getPackage().getName())
-            .register(JspMvcFeature.class);
+        packages(MyApplication.class.getPackage().getName());
+
+        register(JspMvcFeature.class);
+        property(JspMvcFeature.TEMPLATE_BASE_PATH, "/WEB-INF/view");
     }
+
+
 }

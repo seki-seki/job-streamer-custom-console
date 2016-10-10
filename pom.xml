@@ -9,6 +9,12 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>job-streamer-custom-console</name>
 
+  <properties>
+    <jetty.version>9.3.6.v20151106</jetty.version>
+    <jersey.version>2.23.2</jersey.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <finalName>job-streamer-custom-console</finalName>
     <plugins>
@@ -98,6 +104,30 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <version>1.9.5</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-core</artifactId>
+      <version>1.6.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-api-mockito</artifactId>
+      <version>1.6.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.powermock</groupId>
+      <artifactId>powermock-module-junit4</artifactId>
+      <version>1.6.1</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -110,9 +140,5 @@
       <version>${jetty.version}</version>
     </dependency>
   </dependencies>
-  <properties>
-    <jetty.version>9.3.6.v20151106</jetty.version>
-    <jersey.version>2.23.2</jersey.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+
 </project>
