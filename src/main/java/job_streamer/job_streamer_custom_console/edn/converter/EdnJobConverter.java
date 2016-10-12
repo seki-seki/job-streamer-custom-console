@@ -1,16 +1,8 @@
 package job_streamer.job_streamer_custom_console.edn.converter;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import job_streamer.job_streamer_custom_console.edn.annotation.EdnKey;
-import job_streamer.job_streamer_custom_console.model.Job;
-import lombok.Getter;
-import us.bpsm.edn.Keyword;
-import us.bpsm.edn.parser.Parseable;
-import us.bpsm.edn.parser.Parser;
-import us.bpsm.edn.parser.Parsers;
+import static us.bpsm.edn.Keyword.newKeyword;
+import static us.bpsm.edn.parser.Parsers.defaultConfiguration;
 
-import javax.annotation.Nonnull;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -21,8 +13,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static us.bpsm.edn.Keyword.newKeyword;
-import static us.bpsm.edn.parser.Parsers.defaultConfiguration;
+import javax.annotation.Nonnull;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
+
+import job_streamer.job_streamer_custom_console.edn.annotation.EdnKey;
+import job_streamer.job_streamer_custom_console.model.Job;
+import lombok.Getter;
+import us.bpsm.edn.Keyword;
+import us.bpsm.edn.parser.Parseable;
+import us.bpsm.edn.parser.Parser;
+import us.bpsm.edn.parser.Parsers;
 
 /**
  * EDN to Job converter.
@@ -45,7 +47,14 @@ public class EdnJobConverter {
         }
     }
 
-    public List<Job> convert(@Nonnull final String edn) {
+    public Job convertJob(@Nonnull final String edn) {
+        final Parseable parseable = Parsers.newParseable(edn);
+        final Map jobSingleResults = (Map) EDN_PARSER.nextValue(parseable);
+
+        return createJob(jobSingleResults, CACHE);
+    }
+    
+    public List<Job> convertJobs(@Nonnull final String edn) {
         final Parseable parseable = Parsers.newParseable(edn);
         final Map parsedData = (Map) EDN_PARSER.nextValue(parseable);
 

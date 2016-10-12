@@ -48,7 +48,7 @@ public final class ControlBusEndpoint {
         if (Strings.isNullOrEmpty(edn)) {
             return Lists.newArrayList();
         }
-        return ednJobConverter.convert(edn);
+        return ednJobConverter.convertJobs(edn);
     }
 
     public void postExecutions(@Nonnull final String jobName, final Entity<?> exections) {
