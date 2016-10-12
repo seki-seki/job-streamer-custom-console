@@ -14,4 +14,4 @@ cd job-streamer-custom-console
 mvn jetty:run
 ```
 
-access http://localhost:8989 in your browser
+access http://localhost:8989/job/index in your browser
