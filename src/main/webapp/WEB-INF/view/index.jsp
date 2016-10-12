@@ -6,9 +6,10 @@
 	<div class="main grid content full height">
 		<h1 class="ui violet header">Search</h1>
 		<form action="./search" method="get">
-			ジョブ名<input type="text" name="name"><br/>
-			最終実行日<input type="date" name="since"> ～ <input type="date" name="until"><br/>
-			最終実行ステータス<input type="text" name="status">
+			ジョブ名<input type="text" name="name"><br /> 最終実行日<input
+				type="date" name="since"> ～ <input type="date" name="until"><br />
+			最終実行ステータス<input type="text" name="exitStatus">
+			最終バッチステータス<input type="text" name="batchStatus">
 			<button type="submit" class="search button">
 				<i class="search icon"></i>
 			</button>
@@ -19,11 +20,12 @@
 				<thead>
 					<tr>
 						<th rowspan="2">Job name</th>
-						<th colspan="2">Last execution</th>
+						<th colspan="3">Last execution</th>
 						<th rowspan="2">Operations</th>
 					</tr>
 					<tr>
 						<th>Exit Status</th>
+						<th>Batch Status</th>
 						<th>End Time</th>
 					</tr>
 				</thead>
@@ -32,6 +34,7 @@
 						<tr>
 							<td>${job.name}</td>
 							<td>${job.lastExitStatus}</td>
+							<td>${job.lastBatchStatus}</td>
 							<td>${job.lastExecutionEndTime}</td>
 							<td>
 								<form action="./${job.name}/execute/" method="post">
@@ -39,7 +42,15 @@
 										class="ui circular icon green basic button">
 										<i class="play icon"></i>
 									</button>
-								</form>
+								</form> <c:if test="${!empty job.lastExecutionId}">
+									<form action="./${job.name}/${job.lastExecutionId}/stop/"
+										method="post">
+										<button type="submit"
+											class="ui circular icon green basic button">
+											<i class="stop icon"></i>
+										</button>
+									</form>
+								</c:if>
 							</td>
 						</tr>
 					</c:forEach>

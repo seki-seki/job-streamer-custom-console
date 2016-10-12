@@ -30,15 +30,17 @@ public class JobResource {
     }
 
     @GET
+    @Path("search")
     public Viewable search(
             // TODO: 日付等のバリデーション
             @QueryParam("name") final String name,
             @QueryParam("since") final String since,
             @QueryParam("until") final String until,
-            @QueryParam("status") final String status
+            @QueryParam("exitStatus") final String exitStatus,
+            @QueryParam("batchStatus") final String batchStatus
     ) throws Exception {
         final JobSearchQuery query = JobSearchQuery.builder()
-                .name(name).since(since).until(until).status(status)
+                .name(name).since(since).until(until).exitStatus(exitStatus).batchStatus(batchStatus)
                 .build();
         final List<Job> jobs = endpoint.fetchJobs(query);
 
@@ -51,6 +53,13 @@ public class JobResource {
         endpoint.postExecutions(jobName, null);
 
         return new Viewable("/afterExecute");
+    }
+    
+    @POST
+    @Path("{jobname}/{executionid}/stop")
+    public Viewable stop(@PathParam("jobname") final String jobName,@PathParam("executionid") final String executionid) {
+        endpoint.stopExecutions(jobName,executionid, null);
+        return new Viewable("/afterStop");
     }
 
 }

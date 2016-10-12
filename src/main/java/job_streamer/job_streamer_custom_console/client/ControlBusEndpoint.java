@@ -1,21 +1,24 @@
 package job_streamer.job_streamer_custom_console.client;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import job_streamer.job_streamer_custom_console.edn.converter.EdnJobConverter;
-import job_streamer.job_streamer_custom_console.model.Job;
-import job_streamer.job_streamer_custom_console.util.HttpRequestUtil;
-import lombok.Builder;
-import org.glassfish.jersey.uri.UriComponent;
-import org.glassfish.jersey.uri.UriComponent.Type;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.inject.Singleton;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.UriBuilder;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
+import org.glassfish.jersey.uri.UriComponent;
+import org.glassfish.jersey.uri.UriComponent.Type;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
+import job_streamer.job_streamer_custom_console.edn.converter.EdnJobConverter;
+import job_streamer.job_streamer_custom_console.model.Job;
+import job_streamer.job_streamer_custom_console.util.HttpRequestUtil;
+import lombok.Builder;
 
 /**
  * @author yhonda
@@ -52,10 +55,17 @@ public final class ControlBusEndpoint {
     }
 
     public void postExecutions(@Nonnull final String jobName, final Entity<?> exections) {
-        final UriBuilder uriBuilder = UriBuilder.fromUri(CONTROL_BUS_URL).path("default/jobs/{name}/executions");
+        final UriBuilder uriBuilder = UriBuilder.fromUri(CONTROL_BUS_URL).path("default/job/{name}/executions");
 
         final String url = uriBuilder.build(jobName).toString();
         HttpRequestUtil.executePostJSON(url, exections);
+    }
+    
+    public void stopExecutions(@Nonnull final String jobName,@Nonnull final String executionId, final Entity<?> exections) {
+        final UriBuilder uriBuilder = UriBuilder.fromUri(CONTROL_BUS_URL).path("default/job/{name}/execution/{id}/stop");
+
+        final String url = uriBuilder.build(jobName,executionId).toString();
+        HttpRequestUtil.executePutJSON(url, exections);
     }
 
     /**
@@ -67,7 +77,8 @@ public final class ControlBusEndpoint {
         private String name;
         private String since;
         private String until;
-        private String status;
+        private String exitStatus;
+        private String batchStatus;
 
         @Override
         public String toString() {
@@ -82,8 +93,11 @@ public final class ControlBusEndpoint {
             if (!Strings.isNullOrEmpty(until)) {
                 queryItems.add("until:" + until);
             }
-            if (!Strings.isNullOrEmpty(status)) {
-                queryItems.add("exit-status:" + status);
+            if (!Strings.isNullOrEmpty(exitStatus)) {
+                queryItems.add("exit-status:" + exitStatus);
+            }
+            if (!Strings.isNullOrEmpty(batchStatus)) {
+                queryItems.add("batch-status:" + batchStatus);
             }
             return queryItems.stream().collect(Collectors.joining(" "));
         }
