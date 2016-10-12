@@ -1,13 +1,19 @@
 package job_streamer.job_streamer_custom_console.resource;
 
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+
+import org.glassfish.jersey.server.mvc.Viewable;
+
 import job_streamer.job_streamer_custom_console.client.ControlBusEndpoint;
 import job_streamer.job_streamer_custom_console.client.ControlBusEndpoint.JobSearchQuery;
 import job_streamer.job_streamer_custom_console.model.Job;
-import org.glassfish.jersey.server.mvc.Viewable;
-
-import javax.inject.Inject;
-import javax.ws.rs.*;
-import java.util.List;
 
 @Path("job")
 public class JobResource {

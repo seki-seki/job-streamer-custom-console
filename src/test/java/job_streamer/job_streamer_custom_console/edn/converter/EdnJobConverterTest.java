@@ -72,6 +72,7 @@ public class EdnJobConverterTest {
                 "    :job-execution/start-time #inst \"2015-04-13T09:00:00.000-00:00\"\n" +
                 "  }\n" +
                 "  :job/latest-execution {\n" +
+                "    :db/id 17592186045464"+
                 "    :job-execution/exit-status \"queued\"\n" +
                 "    :job-execution/end-time #inst \"2015-04-13T07:00:00.006-00:00\"\n" +
                 "  }\n" +
@@ -81,7 +82,7 @@ public class EdnJobConverterTest {
 
         assertThat(actual.getName(), is("MyShell"));
         assertThat(actual.getLastExitStatus(), is("queued"));
-
+        assertThat(actual.getLastExecutionId(), is(Long.parseLong("17592186045464")));
         final Date lastExecutionEndTime = actual.getLastExecutionEndTime();
         assertThat(FORMAT.format(lastExecutionEndTime), is("2015-04-13 16:00:00"));
     }

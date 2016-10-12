@@ -18,6 +18,9 @@ public class Job {
 
     @EdnKey(":job/latest-execution :job-execution/end-time")
     private Date lastExecutionEndTime;
+    
+    @EdnKey(":job/latest-execution :db/id")
+    private Long lastExecutionId;
 
     // TODO: 他にも必要なプロパティがあれば追加
 }
