@@ -5,12 +5,13 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Optional;
 
 public class HttpRequestUtil {
     public static String executeGet(String url) {
-
-        Client client = ClientBuilder.newBuilder().build();
+        Client client = null;
         try {
+            client = ClientBuilder.newBuilder().build();
             Response response = client.target(url).request().get();
 
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
@@ -23,18 +24,19 @@ public class HttpRequestUtil {
 
             response.close();
         } finally {
-            client.close();
+            Optional.ofNullable(client).ifPresent(Client::close);
         }
         // exampleなので200以外のステータスにはnullを返す。
         return null;
     }
 
     public static String executePostJSON(String url, Entity<?> entity) {
-
-        Client client = ClientBuilder.newBuilder().build();
+        Client client = null;
         try {
-            Response response = client.target(url).request(MediaType.APPLICATION_JSON)
-                    .post(entity == null ? null :Entity.json(entity));
+            client = ClientBuilder.newBuilder().build();
+            final Entity<?> json = entity == null ? null : Entity.json(entity);
+            final Response response = client.target(url).request(MediaType.APPLICATION_JSON)
+                    .post(json);
 
             if (response.getStatus() == Response.Status.OK.getStatusCode() || response.getStatus() == Response.Status.CREATED.getStatusCode()) {
                 return response.readEntity(String.class);
@@ -46,7 +48,7 @@ public class HttpRequestUtil {
 
             response.close();
         } finally {
-            client.close();
+            Optional.ofNullable(client).ifPresent(Client::close);
         }
         // exampleなので200以外のステータスにはnullを返す。
         return null;
