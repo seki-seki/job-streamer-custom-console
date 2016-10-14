@@ -35,7 +35,7 @@ public class HttpRequestUtil {
         Client client = null;
         try {
             client = ClientBuilder.newBuilder().build();
-            final Entity<?> json = entity == null ? null : Entity.json(entity);
+            final Entity<?> json = entity == null ? Entity.text("") : Entity.json(entity);
             final Response response = client.target(url).request(MediaType.APPLICATION_JSON)
                     .post(json);
 
@@ -59,7 +59,7 @@ public class HttpRequestUtil {
         Client client = null;
         try {
             client = ClientBuilder.newBuilder().build();
-            final Entity<?> json = entity == null ? null : Entity.json(entity);
+            final Entity<?> json = entity == null ? Entity.text("") : Entity.json(entity);
             final Response response = client.target(url).request(MediaType.APPLICATION_JSON)
                     .put(json);
 
