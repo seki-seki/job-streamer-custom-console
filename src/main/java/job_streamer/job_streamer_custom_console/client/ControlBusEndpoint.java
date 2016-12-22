@@ -46,25 +46,32 @@ public final class ControlBusEndpoint {
         }
         final String url = uriBuilder.build().toString();
         final String edn = HttpRequestUtil.executeGet(url, token);
-
-        if (Strings.isNullOrEmpty(edn)) {
+        if (edn == HttpRequestUtil.UNAUTHORIZED) {
+        	return null;
+        } else if (Strings.isNullOrEmpty(edn)) {
             return Lists.newArrayList();
         }
         return ednJobConverter.convertJobs(edn);
     }
 
-    public void postExecutions(@Nonnull final String jobName, final Entity<?> exections, @Nonnull final String token) {
+    public String postExecutions(@Nonnull final String jobName, final Entity<?> exections, @Nonnull final String token) {
         final UriBuilder uriBuilder = UriBuilder.fromUri(CONTROL_BUS_URL).path("default/job/{name}/executions");
 
         final String url = uriBuilder.build(jobName).toString();
-        HttpRequestUtil.executePostJSON(url, exections, token);
+        if (HttpRequestUtil.executePostJSON(url, exections, token) == HttpRequestUtil.UNAUTHORIZED) {
+        	return null;
+        }
+        return "Success";
     }
 
-    public void stopExecutions(@Nonnull final String jobName,@Nonnull final String executionId, final Entity<?> exections, @Nonnull final String token) {
+    public String stopExecutions(@Nonnull final String jobName,@Nonnull final String executionId, final Entity<?> exections, @Nonnull final String token) {
         final UriBuilder uriBuilder = UriBuilder.fromUri(CONTROL_BUS_URL).path("default/job/{name}/execution/{id}/stop");
 
         final String url = uriBuilder.build(jobName,executionId).toString();
-        HttpRequestUtil.executePutJSON(url, exections, token);
+        if (HttpRequestUtil.executePutJSON(url, exections, token) == HttpRequestUtil.UNAUTHORIZED) {
+        	return null;
+        }
+        return "Success";
     }
 
     /**
