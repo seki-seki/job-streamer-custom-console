@@ -9,11 +9,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 public class HttpRequestUtil {
-    public static String executeGet(String url) {
+    public static String executeGet(String url, String token) {
         Client client = null;
         try {
             client = ClientBuilder.newBuilder().build();
-            Response response = client.target(url).request().get();
+            Response response = client.target(url).request().header("Authorization", "Token " + token).get();
 
             if (response.getStatus() == Response.Status.OK.getStatusCode()) {
                 return response.readEntity(String.class);
@@ -31,13 +31,13 @@ public class HttpRequestUtil {
         return null;
     }
 
-    public static String executePostJSON(String url, Entity<?> entity) {
+    public static String executePostJSON(String url, Entity<?> entity, String token) {
         Client client = null;
         try {
             client = ClientBuilder.newBuilder().build();
             final Entity<?> json = entity == null ? Entity.text("") : Entity.json(entity);
             final Response response = client.target(url).request(MediaType.APPLICATION_JSON)
-                    .post(json);
+            		.header("Authorization", "Token " + token).post(json);
 
             if (response.getStatus() == Response.Status.OK.getStatusCode() || response.getStatus() == Response.Status.CREATED.getStatusCode()) {
                 return response.readEntity(String.class);
@@ -55,13 +55,13 @@ public class HttpRequestUtil {
         return null;
     }
     
-    public static String executePutJSON(String url, Entity<?> entity) {
+    public static String executePutJSON(String url, Entity<?> entity, String token) {
         Client client = null;
         try {
             client = ClientBuilder.newBuilder().build();
             final Entity<?> json = entity == null ? Entity.text("") : Entity.json(entity);
             final Response response = client.target(url).request(MediaType.APPLICATION_JSON)
-                    .put(json);
+            		.header("Authorization", "Token " + token).put(json);
 
             if (response.getStatus() == Response.Status.OK.getStatusCode() || response.getStatus() == Response.Status.CREATED.getStatusCode()) {
                 return response.readEntity(String.class);
@@ -76,6 +76,30 @@ public class HttpRequestUtil {
             Optional.ofNullable(client).ifPresent(Client::close);
         }
         // exampleなので200以外のステータスにはnullを返す。
+        return null;
+    }
+
+    public static String executeLoginPost(String url) {
+        Client client = null;
+        try {
+            client = ClientBuilder.newBuilder().build();
+            final Response response = client.target(url).request().post(null);
+            final String location = response.getHeaderString("Location");
+            if (response.getStatus() == Response.Status.FOUND.getStatusCode() && !(location == null)
+            		&& !(location.endsWith("?error=true"))) {
+            	final String token = response.readEntity(String.class).substring(9, 45);
+                return token;
+            } else {
+                // TODO:REDIRECT以外のハンドリング
+                System.out.println(response.getStatus());
+                System.out.println(response.getStatusInfo());
+            }
+
+            response.close();
+        } finally {
+            Optional.ofNullable(client).ifPresent(Client::close);
+        }
+        // exampleなのでREDIRECT以外のステータスにはnullを返す。
         return null;
     }
 }
