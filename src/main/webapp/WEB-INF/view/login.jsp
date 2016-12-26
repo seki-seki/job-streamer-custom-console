@@ -6,7 +6,7 @@
 	<div class="main grid content full height">
 		<div class="ui middle aligned center aligned login grid">
 			<div class="column">
-				<form action="/login" class="ui large login form error"
+				<form action=""<%= request.getContextPath() + "/login" %>" class="ui large login form error"
 					method="post">
 					<div class="ui stacked segment"
 						style="width: 400px; margin: auto; margin-top: 100px;">

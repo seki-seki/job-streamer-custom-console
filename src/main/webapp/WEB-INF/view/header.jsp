@@ -27,6 +27,9 @@
 		<div class="title item">
 			<b>Job Streamer</b>
 		</div>
+		<div class="right menu">
+		<!--  TODO: login 画面にはログアウトボタンを出さないようにする-->
+		<a href="<%= request.getContextPath() + "/logout" %>"><i class = "sign out icon"></i>logout</a></div>
 	</div>
 </body>
 </html>
