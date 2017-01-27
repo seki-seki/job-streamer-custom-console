@@ -8,7 +8,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.glassfish.jersey.client.ClientProperties;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import play.libs.Json;
 
 public class HttpRequestUtil {
     final public static String UNAUTHORIZED = "UNAUTHORIZED";
@@ -93,18 +95,18 @@ public class HttpRequestUtil {
         return null;
     }
 
-    public static String executeLoginPost(String url) {
+    public static String executeLoginPost(String url, String username, String password) {
         Client client = null;
         try {
             client = ClientBuilder.newBuilder().build();
-            final Response response = client.target(url).property(ClientProperties.FOLLOW_REDIRECTS, Boolean.FALSE).request().post(null);
-            final String location = response.getHeaderString("Location");
-            if (response.getStatus() == Response.Status.FOUND.getStatusCode() && !(location == null)
-                    && !(location.endsWith("?error=true"))) {
+            JsonNode json = Json.newObject()
+                    .put("user/id", username)
+                    .put("user/password", password);
+            final Response response = client.target(url).request().post(Entity.json(json.toString()));
+            if (response.getStatus() == Response.Status.CREATED.getStatusCode() ) {
                 final String token = response.readEntity(String.class).substring(9, 45);
                 return token;
             } else {
-                // TODO:REDIRECT以外のハンドリング
                 System.out.println(response.getStatus());
                 System.out.println(response.getStatusInfo());
             }

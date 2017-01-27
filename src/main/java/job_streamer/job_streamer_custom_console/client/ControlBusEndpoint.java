@@ -110,15 +110,9 @@ public final class ControlBusEndpoint {
     }
 
     public String postLogin(@Nonnull final String username, @Nonnull final String password) {
-        final UriBuilder uriBuilder = UriBuilder.fromUri(CONTROL_BUS_URL).path("login")
-                // TODO: リダイレクトURLの環境変数化
-                .queryParam("next", Optional.ofNullable(System.getenv().get("ACCESS_CONTROL_ALLOW_ORIGIN")).orElse("http://localhost:3000"))
-                .queryParam("back", Optional.ofNullable(System.getenv().get("ACCESS_CONTROL_ALLOW_ORIGIN")).orElse("http://localhost:3000/login"))
-                .queryParam("username", username)
-                .queryParam("password", password)
-                .queryParam("appname", "default");
+        final UriBuilder uriBuilder = UriBuilder.fromUri(CONTROL_BUS_URL).path("auth");
         final String url = uriBuilder.build().toString();
-        return HttpRequestUtil.executeLoginPost(url);
+        return HttpRequestUtil.executeLoginPost(url,username,password);
     }
 
 }
