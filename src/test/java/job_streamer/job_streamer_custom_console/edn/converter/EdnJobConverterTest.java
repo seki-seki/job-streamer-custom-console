@@ -86,5 +86,34 @@ public class EdnJobConverterTest {
         final Date lastExecutionEndTime = actual.getLastExecutionEndTime();
         assertThat(FORMAT.format(lastExecutionEndTime), is("2015-04-13 16:00:00"));
     }
+    @Test
+    public void convertNumberJob() {
+        final String edn = "{\n" +
+                "  :db/id 17592186045451\n" +
+                "  :job/schedule {\n" +
+                "    :schedule/active? true\n" +
+                "    :schedule/cron-notation \"0 0 * * * ?\"\n" +
+                "  }\n" +
+                "  :job/restartable? true\n" +
+                "  :job/name \"MyShell\"\n" +
+                "  :job/next-execution {\n" +
+                "    :job-execution/start-time #inst \"2015-04-13T09:00:00.000-00:00\"\n" +
+                "  }\n" +
+                "  :job/latest-execution {\n" +
+                "    :db/id 17592186045464"+
+                "    :job-execution/exit-status \"queued\"\n" +
+                "    :job-execution/end-time #inst \"2015-04-13T07:00:00.006-00:00\"\n" +
+                "  }\n" +
+                "  :job/stats {:total 57, :success 21, :failure 33, :average 16586446/21}"+
+                "}";
+        final Job actual = CONVERTER.convertJob(edn);
+
+
+        assertThat(actual.getName(), is("MyShell"));
+        assertThat(actual.getLastExitStatus(), is("queued"));
+        assertThat(actual.getLastExecutionId(), is(Long.parseLong("17592186045464")));
+        final Date lastExecutionEndTime = actual.getLastExecutionEndTime();
+        assertThat(FORMAT.format(lastExecutionEndTime), is("2015-04-13 16:00:00"));
+    }
 
 }

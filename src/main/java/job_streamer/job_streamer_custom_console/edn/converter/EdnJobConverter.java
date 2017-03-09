@@ -10,6 +10,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,7 +49,16 @@ public class EdnJobConverter {
         }
     }
 
-    public Job convertJob(@Nonnull final String edn) {
+    public Job convertJob(@Nonnull String edn) {
+        // edn parser don't work when edn contains "[\d+]\/[\d+]"
+        // TODO: remove it when edn-java fix this issue
+        Pattern p = Pattern.compile("(\\d+)/(\\d+)");
+        Matcher m = p.matcher(edn);
+        while(m.find()){
+            System.out.println(m.group() + m.group(1) + m.group(2));
+            edn = edn.replace(m.group(), String.valueOf(Integer.parseInt(m.group(1))/Integer.parseInt(m.group(2))));
+            System.out.println(edn);
+        }
         final Parseable parseable = Parsers.newParseable(edn);
         final Map jobSingleResults = (Map) EDN_PARSER.nextValue(parseable);
 
