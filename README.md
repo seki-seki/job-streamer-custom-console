@@ -1,11 +1,11 @@
 # job-streamer-custom-console
 
-#Required Emvironment
+## Required Emvironment
 java8 or later
 
 maven 3.3.0 or later
 
-#Getting Started
+## Getting Started
 
 ```
 export CONTROL_BUS_URL="[your own control-bus-url]"
